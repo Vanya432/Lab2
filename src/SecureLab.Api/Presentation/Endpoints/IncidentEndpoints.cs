@@ -1,6 +1,7 @@
 using SecureLab.Api.Application.Incidents;
 using SecureLab.Api.Data.Entities;
 using SecureLab.Api.Presentation.Contracts;
+using SecureLab.Api.Data;
 
 namespace SecureLab.Api.Presentation.Endpoints;
 
@@ -68,8 +69,10 @@ public static class IncidentEndpoints
     private static async Task<IResult> GetSeveritySummaryAsync(
         IncidentQueries queries,
         CancellationToken cancellationToken)
+
     {
         var summary = await queries.GetSeveritySummaryAsync(cancellationToken);
         return Results.Ok(summary);
     }
+   
 }
