@@ -68,3 +68,7 @@ Content-Type: application/json
   "severity": "Low",
   "occurredAtUtc": "2026-01-01T12:00:00Z"
 }
+
+### Testing vulnerbility fix
+GET http://localhost:5080/api/incidents/search?q=O%27Brien
+Accept: application/json

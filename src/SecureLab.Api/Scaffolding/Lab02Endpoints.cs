@@ -12,14 +12,44 @@ public static class Lab02Endpoints
     {
         app.MapGet("/api/incidents/search", async (string? q, string? sortBy, SecureLabDbContext db, CancellationToken ct) =>
         {
-            var order = sortBy switch
+            if (sortBy is not (null or "" or "createdAtUtc" or "severity" or "status"))
             {
-                null or "" or "createdAtUtc" => "created_at_utc DESC",
-                "severity" => "severity", "status" => "status", _ => sortBy
+                return Results.ValidationProblem(
+                    new Dictionary<string, string[]>
+                    {
+                        ["sortBy"] = ["Allowed values: createdAtUtc, severity, status."]
+                    });
+            }
+            var search = (q ?? "")
+            .Replace("\\", "\\\\")
+            .Replace("%", "\\%")
+            .Replace("_", "\\_");
+
+            var query = db.Incidents
+            .AsNoTracking()
+            .Where(i =>
+            EF.Functions.ILike(i.Title, "%" + search + "%") ||
+            EF.Functions.ILike(i.Description, "%" + search + "%"));
+
+            var sortedQuery = sortBy switch
+            {
+                "severity" => query
+                .OrderByDescending(i => i.Severity)
+                .ThenBy(i => i.Id),
+
+                "status" => query
+                .OrderBy(i => i.Status)
+                .ThenBy(i => i.Id),
+                
+                _=> query
+                .OrderByDescending(i => i.CreatedAtUtc)
+                .ThenBy(i => i.Id)
             };
-            var sql = "SELECT * FROM incidents WHERE title ILIKE '%" + (q ?? "")
-                + "%' OR description ILIKE '%" + (q ?? "") + "%' ORDER BY " + order + " LIMIT 50";
-            var rows = await db.Incidents.FromSqlRaw(sql).AsNoTracking().ToListAsync(ct);
+
+            var rows = await sortedQuery
+            .Take(50)
+            .ToListAsync(ct);
+
             return Results.Ok(rows.Select(row => new
             {
                 row.Id, row.Title, row.Description,
