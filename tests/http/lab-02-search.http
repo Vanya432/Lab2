@@ -72,3 +72,23 @@ Content-Type: application/json
 ### Testing vulnerbility fix
 GET http://localhost:5080/api/incidents/search?q=O%27Brien
 Accept: application/json
+
+### Testing lack of sortBy thing
+GET http://localhost:5080/api/incidents/search?q=report&sortBy=unknown
+Accept: application/json
+
+### Testing random special char
+GET http://localhost:5080/api/incidents/search?q=%5C
+Accept: application/json
+
+### search regression test
+GET http://localhost:5080/api/incidents/search?q=навчальн
+Accept: application/json
+
+### SortBy severity test
+GET http://localhost:5080/api/incidents/search?sortBy=severity
+Accept: application/json
+
+### SortBy status test
+GET http://localhost:5080/api/incidents/search?sortBy=status
+Accept: application/json

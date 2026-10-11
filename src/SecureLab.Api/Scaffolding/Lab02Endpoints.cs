@@ -34,11 +34,16 @@ public static class Lab02Endpoints
             var sortedQuery = sortBy switch
             {
                 "severity" => query
-                .OrderByDescending(i => i.Severity)
+                .OrderBy(i => i.Severity == IncidentSeverity.Critical ? 0 :
+                i.Severity == IncidentSeverity.High ? 1 :
+                i.Severity == IncidentSeverity.Medium ? 2 : 3)
                 .ThenBy(i => i.Id),
 
                 "status" => query
-                .OrderBy(i => i.Status)
+                .OrderBy(i => i.Status == IncidentStatus.New ? 0 :
+                i.Status == IncidentStatus.Triaged ? 1 :
+                i.Status == IncidentStatus.InProgress ? 2 :
+                i.Status == IncidentStatus.Resolved ? 3 : 4)
                 .ThenBy(i => i.Id),
                 
                 _=> query
