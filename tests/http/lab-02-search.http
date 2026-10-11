@@ -92,3 +92,7 @@ Accept: application/json
 ### SortBy status test
 GET http://localhost:5080/api/incidents/search?sortBy=status
 Accept: application/json
+
+### invalid SortBy test
+GET http://localhost:5080/api/incidents/search?q=report&sortBy=unknown
+Accept: application/json
